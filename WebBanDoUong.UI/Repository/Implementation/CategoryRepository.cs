@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using WebBanDoUong.UI.Data;
 using WebBanDoUong.UI.Models.Domain;
 using WebBanDoUong.UI.Repository.Abstract;
@@ -42,6 +43,16 @@ namespace WebBanDoUong.UI.Repository.Implementation
                 return null;
             }
             return category;
+        }
+
+        public List<Product>? GetProductsById(int id)
+        {
+            var products = db.Products.Where(c => c.Category.Id == id).ToList();
+            if (products.Count == 0)
+            {
+                return null;
+            }
+            return products;
         }
     }
 }

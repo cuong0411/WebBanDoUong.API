@@ -1,4 +1,5 @@
-﻿using WebBanDoUong.UI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebBanDoUong.UI.Data;
 using WebBanDoUong.UI.Models.Domain;
 using WebBanDoUong.UI.Repository.Abstract;
 
@@ -12,14 +13,35 @@ namespace WebBanDoUong.UI.Repository.Implementation
         {
             this.db = db;
         }
-        public bool Add(Product model)
+        public bool Add(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                db.Products.Add(product);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
         }
 
         public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            var products = db.Products.Include("Category").ToList();
+            return products;
+        }
+
+        public Product? GetById(int id)
+        {
+            var product = db.Products.FirstOrDefault(x => x.Id == id);
+            if (product == null)
+            {
+                return null;
+            }
+            return product;
         }
     }
 }

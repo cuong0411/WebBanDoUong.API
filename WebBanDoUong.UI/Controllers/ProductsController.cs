@@ -9,49 +9,37 @@ namespace WebBanDoUong.UI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IProductRepository productRepository;
         private readonly IFileService fileService;
 
-        public CategoriesController(ICategoryRepository categoryRepository, IFileService fileService)
+        public ProductsController(IProductRepository productRepository, IFileService fileService)
         {
-            this.categoryRepository = categoryRepository;
+            this.productRepository = productRepository;
             this.fileService = fileService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var categories = categoryRepository.GetAll();
-            return Ok(categories);
-        }
-        [HttpGet]
-        [Route("{id:int}")]
-        public IActionResult Get(int id)
-        {
-            var category = categoryRepository.GetById(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return Ok(category);
-        }
-        [HttpGet]
-        [Route("Products/{id:int}")]
-        public IActionResult GetProductsById(int id)
-        {
-            var products = categoryRepository.GetProductsById(id);
-            if (products == null)
-            {
-                return NotFound();
-            }
+            var products = productRepository.GetAll();
             return Ok(products);
         }
-
         [HttpPost]
-        public IActionResult Add([FromForm] Category category)
+        public IActionResult Add([FromForm] ProductDTO productDTO)
         {
+            // DTO => Domain
+            var product = new Product()
+            {
+                Name = productDTO.Name,
+                Description = productDTO.Description,
+                Price = productDTO.Price,
+                ImageFile = productDTO.ImageFile,
+                CategoryId = productDTO.CategoryId,
+            };
+
+
             var status = new Status();
             if (!ModelState.IsValid)
             {
@@ -59,14 +47,14 @@ namespace WebBanDoUong.UI.Controllers
                 status.Message = "Please pass the valid data";
                 return Ok(status);
             }
-            if (category.ImageFile != null)
+            if (product.ImageFile != null)
             {
-                var fileResult = fileService.SaveImage(category.ImageFile);
+                var fileResult = fileService.SaveImage(product.ImageFile);
                 if (fileResult.Item1 == 1)
                 {
-                    category.Image = fileResult.Item2; // getting name of image
+                    product.Image = fileResult.Item2; // getting name of image
                 }
-                var productResult = categoryRepository.Add(category);
+                var productResult = productRepository.Add(product);
                 if (productResult)
                 {
                     status.StatusCode = 1;
@@ -80,6 +68,18 @@ namespace WebBanDoUong.UI.Controllers
                 }
             }
             return Ok(status);
+        }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public IActionResult GetById(int id)
+        {
+            var product = productRepository.GetById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
     }
 }

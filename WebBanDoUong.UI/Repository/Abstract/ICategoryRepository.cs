@@ -7,5 +7,6 @@ namespace WebBanDoUong.UI.Repository.Abstract
         bool Add(Category model);
         Category? GetById(int id);
         List<Category> GetAll();
+        List<Product>? GetProductsById(int id);
     }
 }
