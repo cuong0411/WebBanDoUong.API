@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebBanDoUong.UI.Models.Domain
 {
@@ -10,8 +11,11 @@ namespace WebBanDoUong.UI.Models.Domain
         [MaxLength(500)]
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
         //public int CategoryId { get; set; }
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
 
         // Navigation property
         public virtual Category Category { get; set; }

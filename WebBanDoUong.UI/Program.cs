@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebBanDoUong.UI.Data;
+using WebBanDoUong.UI.Repository.Abstract;
+using WebBanDoUong.UI.Repository.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,11 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("ReactProject"));
 });
+
+// Repository
+builder.Services.AddTransient<IFileService, FileService>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 
