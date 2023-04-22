@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using WebBanDoUong.UI.Data;
 using WebBanDoUong.UI.Repository.Abstract;
 using WebBanDoUong.UI.Repository.Implementation;
@@ -32,7 +33,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// enable React call api
+app.UseCors(builder =>
+{
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader();
+});
+
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Resources"
+});
 
 app.UseAuthorization();
 
